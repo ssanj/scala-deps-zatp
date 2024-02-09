@@ -1,4 +1,4 @@
-// use args::cli;
+use args::cli;
 use std::process::Command;
 use std::format as s;
 
@@ -9,11 +9,10 @@ mod args;
 mod error;
 
 fn main() {
-  // let args = cli::get_cli_args();
-  // TODO: Add parameters for dependency prefix
-  let org = "org.scalatest";
-  let group = "scalatest";
-  let scala_version = "2.13";
+  let args = cli::get_cli_args();
+  let org = &args.org;
+  let group = &args.group;
+  let scala_version = args.scala_version;
   let coursier_result = run_coursier(&s!("{}:{}_{}:", org, group, scala_version));
 
   let zat_result =
@@ -29,14 +28,14 @@ fn main() {
 }
 
 fn encode_error(error: ErrorTypes) -> Result<String, serde_json::Error> {
-    let plugin_error = match error {
-      ErrorTypes::FailedToExecuteCoursier(header, error, exception, fix) => PluginError::new(header, error, exception, fix),
-      ErrorTypes::InvalidResponseEncoding(header, error, exception, fix) => PluginError::new(header, error, exception, fix),
-      ErrorTypes::NoResults(header, error, fix) => PluginError::without_exception(header, error, fix),
-      ErrorTypes::InvalidStatusCode(header, error, fix) => PluginError::without_exception(header, error, fix),
-    };
+  let plugin_error = match error {
+    ErrorTypes::FailedToExecuteCoursier(header, error, exception, fix) => PluginError::new(header, error, exception, fix),
+    ErrorTypes::InvalidResponseEncoding(header, error, exception, fix) => PluginError::new(header, error, exception, fix),
+    ErrorTypes::NoResults(header, error, fix) => PluginError::without_exception(header, error, fix),
+    ErrorTypes::InvalidStatusCode(header, error, fix) => PluginError::without_exception(header, error, fix),
+  };
 
-    serde_json::to_string(&plugin_error)
+  serde_json::to_string(&plugin_error)
 }
 
 fn encode_success(org: &str, group: &str, result: String) -> serde_json::Result<String> {
