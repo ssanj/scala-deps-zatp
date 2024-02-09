@@ -3,20 +3,23 @@ use std::process::Command;
 use std::format as s;
 
 use version_compare::Version;
-use error::{ErrorTypes, PResult};
+use error::{ErrorTypes, PResult, PluginError, PluginSuccess};
 
 mod args;
 mod error;
 
 fn main() {
   // let args = cli::get_cli_args();
-  // TODO: Add parameters for depenency prefix
-  let coursier_result = run_coursier("org.scalatest:scalatest_2.13:");
+  // TODO: Add parameters for dependency prefix
+  let org = "org.scalatest";
+  let group = "scalatest";
+  let scala_version = "2.13";
+  let coursier_result = run_coursier(&s!("{}:{}_{}:", org, group, scala_version));
 
   let zat_result =
     match coursier_result {
-      Ok(result) => encodeSuccess(result),
-      Err(error) => encodeError(error),
+      Ok(result) => encode_success(org, group, result),
+      Err(error) => encode_error(error),
     };
 
   match zat_result {
@@ -25,18 +28,20 @@ fn main() {
   }
 }
 
-fn encodeError(error: ErrorTypes) -> Result<String, serde_json::Error> {
-    match error {
-      ErrorTypes::FailedToExecuteCoursier(_, _, _, _) => todo!(),
-      ErrorTypes::InvalidResponseEncoding(_, _, _, _) => todo!(),
-      ErrorTypes::NoResults(_, _, _) => todo!(),
-      ErrorTypes::InvalidStatusCode(_, _, _) => todo!(),
-    }
+fn encode_error(error: ErrorTypes) -> Result<String, serde_json::Error> {
+    let plugin_error = match error {
+      ErrorTypes::FailedToExecuteCoursier(header, error, exception, fix) => PluginError::new(header, error, exception, fix),
+      ErrorTypes::InvalidResponseEncoding(header, error, exception, fix) => PluginError::new(header, error, exception, fix),
+      ErrorTypes::NoResults(header, error, fix) => PluginError::without_exception(header, error, fix),
+      ErrorTypes::InvalidStatusCode(header, error, fix) => PluginError::without_exception(header, error, fix),
+    };
+
+    serde_json::to_string(&plugin_error)
 }
 
-fn encodeSuccess(result: String) -> serde_json::Result<String> {
-  todo!()
-    //serde_json::to_string(result)
+fn encode_success(org: &str, group: &str, result: String) -> serde_json::Result<String> {
+  let plugin_success = PluginSuccess::new(org, group, result);
+  serde_json::to_string(&plugin_success)
 }
 
 fn run_coursier(dependency_prefix: &str) -> PResult<String> {
@@ -48,33 +53,37 @@ fn run_coursier(dependency_prefix: &str) -> PResult<String> {
 
   let command_str = get_program(&command);
 
-  let output = command.output().map_err(|e| ErrorTypes::failedToExecuteCoursier(&command_str, e.to_string()))?;
+  let output =
+    command
+      .output()
+      .map_err(|e| ErrorTypes::failedToExecuteCoursier(&command_str, e.to_string()))?;
+
   let status = &output.status;
 
   if status.success() {
     let response =
       std::str::from_utf8(&output.stdout)
-        .map_err(|e| ErrorTypes::invalidResponseEncoding(&command_str, "output", e.to_string()))?;
+        .map_err(|e| ErrorTypes::invalidResponseEncoding(&command_str, e.to_string()))?;
 
     let mut response_versions =
       response
         .lines()
-        .filter(|l| !l.contains("-"))
+        .filter(|l| !l.contains("-")) // Remove, pre-release, milestones, RCs etc.
         .filter_map(|l| Version::from(l))
         .collect::<Vec<_>>();
 
     response_versions
-      .sort_by(|x, y| x.compare(y).opposite().ord().expect(&s!("Could not compare order of {} and {}", x, y)));
+      .sort_by(|x, y| x.compare(y).opposite().ord().expect(&s!("Could not compare order of {} and {}", x, y))); // There doesn't seem to be a way to do this safely.
 
     let responses =
       response_versions
         .into_iter()
-        .map(|l| l.to_string())
+        .map(|l| l.to_string()) // Convert them from Version back to Strings.
         .collect::<Vec<_>>();
 
     let latest =
       responses
-      .first()
+      .first() // Get the first/latest version
       .ok_or_else(|| ErrorTypes::noResults(&command_str))?;
 
     Ok(latest.to_owned())
