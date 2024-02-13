@@ -3,10 +3,12 @@ use std::process::Command;
 use std::format as s;
 
 use version_compare::Version;
-use error::{ErrorTypes, PResult, PluginError, PluginSuccess};
+use error::{ErrorTypes, PResult, PluginError, PluginSuccess, PluginResult};
 
 mod args;
 mod error;
+
+const PLUGIN_NAME: &str = "scala-deps";
 
 fn main() {
   let args = cli::get_cli_args();
@@ -17,7 +19,7 @@ fn main() {
 
   let zat_result =
     match coursier_result {
-      Ok(result) => encode_success(org, group, result),
+      Ok(version) => encode_success(version),
       Err(error) => encode_error(error),
     };
 
@@ -29,18 +31,20 @@ fn main() {
 
 fn encode_error(error: ErrorTypes) -> Result<String, serde_json::Error> {
   let plugin_error = match error {
-    ErrorTypes::FailedToExecuteCoursier(header, error, exception, fix) => PluginError::new(header, error, exception, fix),
-    ErrorTypes::InvalidResponseEncoding(header, error, exception, fix) => PluginError::new(header, error, exception, fix),
-    ErrorTypes::NoResults(header, error, fix) => PluginError::without_exception(header, error, fix),
-    ErrorTypes::InvalidStatusCode(header, error, fix) => PluginError::without_exception(header, error, fix),
+    ErrorTypes::FailedToExecuteCoursier(error, exception, fix) => PluginError::new(error, exception, fix),
+    ErrorTypes::InvalidResponseEncoding(error, exception, fix) => PluginError::new(error, exception, fix),
+    ErrorTypes::NoResults(error, fix) => PluginError::without_exception(error, fix),
+    ErrorTypes::InvalidStatusCode(error, fix) => PluginError::without_exception(error, fix),
   };
 
-  serde_json::to_string(&plugin_error)
+  let plugin_result = PluginResult::Error(plugin_error);
+  serde_json::to_string(&plugin_result)
 }
 
-fn encode_success(org: &str, group: &str, result: String) -> serde_json::Result<String> {
-  let plugin_success = PluginSuccess::new(org, group, result);
-  serde_json::to_string(&plugin_success)
+fn encode_success(version: String) -> serde_json::Result<String> {
+  let plugin_success = PluginSuccess::new(version);
+  let plugin_result = PluginResult::Success(plugin_success);
+  serde_json::to_string(&plugin_result)
 }
 
 fn run_coursier(dependency_prefix: &str) -> PResult<String> {
@@ -55,14 +59,14 @@ fn run_coursier(dependency_prefix: &str) -> PResult<String> {
   let output =
     command
       .output()
-      .map_err(|e| ErrorTypes::failedToExecuteCoursier(&command_str, e.to_string()))?;
+      .map_err(|e| ErrorTypes::failed_to_execute_coursier(&command_str, e.to_string()))?;
 
   let status = &output.status;
 
   if status.success() {
     let response =
       std::str::from_utf8(&output.stdout)
-        .map_err(|e| ErrorTypes::invalidResponseEncoding(&command_str, e.to_string()))?;
+        .map_err(|e| ErrorTypes::invalid_response_encoding(&command_str, e.to_string()))?;
 
     let mut response_versions =
       response
@@ -83,11 +87,11 @@ fn run_coursier(dependency_prefix: &str) -> PResult<String> {
     let latest =
       responses
       .first() // Get the first/latest version
-      .ok_or_else(|| ErrorTypes::noResults(&command_str))?;
+      .ok_or_else(|| ErrorTypes::no_results(&command_str))?;
 
     Ok(latest.to_owned())
   } else {
-    Err(ErrorTypes::invalidStatusCode(&command_str, *status))
+    Err(ErrorTypes::invalid_status_code(&command_str, *status))
   }
 }
 

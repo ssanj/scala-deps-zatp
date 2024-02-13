@@ -1,6 +1,6 @@
 use clap::Parser;
 
-/// Zat plugin to fetch scala dependency versions
+/// Zat plugin to fetch the latest stable dependency version for a Scala library
 #[derive(Parser, Debug, Clone)]
 #[command(author, version, about)]
 pub struct Args {
