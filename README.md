@@ -1,10 +1,15 @@
 # Scala Deps
 
-![GitHub Release](https://img.shields.io/github/v/release/ssanj/scala-deps)
+![GitHub Release](https://img.shields.io/github/v/release/ssanj/scala-deps-zatp)
 
-[Zat](https://github.com/ssanj/zat) plugin to fetch the latest stable dependency version for a Scala library. `scala-deps` uses [Coursier](https://get-coursier.io/) in the background. If a query works with Coursier it should work via `scala-deps` as well.
+[Zat](https://github.com/ssanj/zat) plugin to fetch the latest stable dependency version for a Scala library.
 
 ## Installation
+
+### Prerequisites
+
+`scala-deps` uses [Coursier](https://get-coursier.io/) in the background. As such Coursier must be [installed](https://get-coursier.io/docs/cli-installation) for `scala-deps` to work.
+
 
 ### Downloading a Release
 
