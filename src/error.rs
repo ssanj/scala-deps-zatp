@@ -44,7 +44,9 @@ impl ErrorTypes {
 
 #[derive(Debug, Clone, Serialize)]
 pub enum PluginResult {
+  #[serde(rename = "success")]
   Success(PluginSuccess),
+  #[serde(rename = "error")]
   Error(PluginError)
 }
 

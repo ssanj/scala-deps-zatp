@@ -122,7 +122,7 @@ which results in:
 
 ```json
 {
-    "Success":
+    "success":
     {
         "result": "3.3.1"
     }
@@ -143,7 +143,7 @@ results in:
 
 ```.json
 {
-    "Success":
+    "success":
     {
         "result": "2.10.0"
     }
@@ -162,7 +162,7 @@ results in:
 
 ```.json
 {
-    "Error":
+    "error":
     {
         "plugin_name": "scala-deps",
         "error": "The 'scala-deps' plugin did not receive any matching results from coursier.",
