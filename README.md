@@ -31,6 +31,8 @@ cargo build --release
 Copy binary file from target/release/scala-deps to a directory on your path.
 ```
 
+You can use `./release-local` to do the above if your `~/bin` folder is on your PATH.
+
 
 ## Zat Usage
 
@@ -44,21 +46,12 @@ To use `scala-deps` in a Zat repository, define the following properties in your
     "plugin": {
       "id": "scala-deps",
       "args":[
-        {
-          "name": "o",
-          "value": "<ORGANIZATION>",
-          "prefix": "-"
-        },
-        {
-          "name": "g",
-          "value": "<GROUP>",
-          "prefix": "-"
-        },
-        {
-          "name": "s",
-          "value": "<SCALA_VERSION>",
-          "prefix": "-"
-        }
+          "-o",
+          "<ORGANIZATION>",
+          "-g",
+          "<GROUP>",
+          "-s",
+          "<SCALA_VERSION>"
       ]
     }
   }
@@ -74,21 +67,12 @@ Here's an example of using `scala-deps` to look up the latest stable version of 
     "plugin": {
       "id": "scala-deps",
       "args":[
-        {
-          "name": "o",
-          "value": "org.scala-lang",
-          "prefix": "-"
-        },
-        {
-          "name": "g",
-          "value": "scala3-library",
-          "prefix": "-"
-        },
-        {
-          "name": "s",
-          "value": "3",
-          "prefix": "-"
-        }
+          "-o",
+          "org.scala-lang",
+          "-g",
+          "scala3-library",
+          "-s",
+          "3"
       ]
     }
   }
