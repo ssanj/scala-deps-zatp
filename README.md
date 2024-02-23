@@ -36,7 +36,7 @@ You can use `./release-local` to do the above if your `~/bin` folder is on your 
 
 ## Zat Usage
 
-To use `scala-deps` in a Zat repository, define the following properties in your `.variables.zat-promp`:
+To use `scala-deps` in a Zat repository, define the following properties in your `.variables.zat-prompt`:
 
 ```
   {
