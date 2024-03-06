@@ -85,13 +85,13 @@ Here's an example of using `scala-deps` to look up the latest stable version of 
 ```
 Zat plugin to fetch the latest stable dependency version for a Scala library
 
-Usage: scala-deps [OPTIONS] -o <ORG> -g <GROUP> -s <SCALA_VERSION>
+Usage: scala-deps [OPTIONS] -o <ORG> -g <GROUP>
 
 Options:
       --verbose           Verbose debug logging
   -o <ORG>                Org String. Eg. org.typelevel
   -g <GROUP>              Group String. Eg. cats-core
-  -s <SCALA_VERSION>      Scala version. One of 2.13 or 3
+  -s <SCALA_VERSION>      Optional Scala version. One of 2.13 or 3
   -h, --help              Print help
   -V, --version           Print version
 ```
@@ -109,6 +109,23 @@ which results in:
     "success":
     {
         "result": "3.3.1"
+    }
+}
+```
+
+Here's how to look up the latest stable version of Scala 2:
+
+```
+scala-deps -o org.scala-lang -g scala-library
+```
+
+which results in:
+
+```json
+{
+    "success":
+    {
+        "result": "2.13.13"
     }
 }
 ```
