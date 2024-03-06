@@ -15,7 +15,13 @@ fn main() {
   let org = &args.org;
   let group = &args.group;
   let scala_version = args.scala_version;
-  let coursier_result = run_coursier(&s!("{}:{}_{}:", org, group, scala_version));
+  let coursier_string =
+    match scala_version {
+      Some(sv) => s!("{}:{}_{}:", org, group, sv),
+      None => s!("{}:{}:", org, group),
+  };
+
+  let coursier_result = run_coursier(coursier_string.as_str());
 
   let zat_result =
     match coursier_result {

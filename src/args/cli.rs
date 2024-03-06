@@ -16,9 +16,9 @@ pub struct Args {
    #[arg(short)]
    pub group: String,
 
-  /// Scala version. One of 2.13 or 3.
+  /// Optional Scala version. One of 2.13 or 3
   #[arg(short)]
-  pub scala_version: String,
+  pub scala_version: Option<String>,
 }
 
 pub fn get_cli_args() -> Args {
