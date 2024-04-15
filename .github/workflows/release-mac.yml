@@ -72,8 +72,8 @@ jobs:
     - name: Checkout homebrew-$APP
       uses: actions/checkout@v4
       with:
-        repository: ssanj/homebrew-$APP
-        path: homebrew-$APP
+        repository: ssanj/homebrew-${{ env.APP }}
+        path: homebrew-${{ env.APP }}
 
     - name: Echo Paths
       run: |
