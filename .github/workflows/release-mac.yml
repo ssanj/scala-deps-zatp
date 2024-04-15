@@ -7,7 +7,7 @@ on:
       - "*"
 
 env:
-  APP: "scala-deps-zatp"
+  REPO: "scala-deps-zatp"
   EXEC: "scala-deps"
 
 jobs:
@@ -23,10 +23,10 @@ jobs:
         ]
 
     steps:
-    - name: Checkout ${{ env.APP }}
+    - name: Checkout ${{ env.REPO }}
       uses: actions/checkout@v4
       with:
-        path: ${{ env.APP }}
+        path: ${{ env.REPO }}
 
     - name: Echo Paths
       run: |
@@ -45,7 +45,7 @@ jobs:
       run: |
         rustc -Vv
         cargo -V
-        APP_DIR="$PWD/$APP"
+        APP_DIR="$PWD/$REPO"
         cd "$APP_DIR"
         cargo build --release --target ${{ matrix.target }} --target-dir "$APP_DIR/target"
         RELEASE_DIR="$APP_DIR/target/${{ matrix.target }}/release"
@@ -70,11 +70,11 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: ${{ env.RELEASE_ARTIFACT_NAME }}
 
-    - name: Checkout homebrew-${{ env.APP }}
+    - name: Checkout homebrew-${{ env.REPO }}
       uses: actions/checkout@v4
       with:
-        repository: ssanj/homebrew-${{ env.APP }}
-        path: homebrew-${{ env.APP }}
+        repository: ssanj/homebrew-${{ env.REPO }}
+        path: homebrew-${{ env.REPO }}
 
     - name: Echo Paths
       run: |
