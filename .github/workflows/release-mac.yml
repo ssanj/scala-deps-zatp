@@ -22,7 +22,7 @@ jobs:
         ]
 
     steps:
-    - name: Checkout $APP
+    - name: Checkout ${{ env.APP }}
       uses: actions/checkout@v4
       with:
         path: $APP
