@@ -7,7 +7,8 @@ on:
       - "*"
 
 env:
-  APP: "scala-deps"
+  APP: "scala-deps-zatp"
+  EXEC: "scala-deps"
 
 jobs:
   release:
@@ -48,7 +49,7 @@ jobs:
         cd "$APP_DIR"
         cargo build --release --target ${{ matrix.target }} --target-dir "$APP_DIR/target"
         RELEASE_DIR="$APP_DIR/target/${{ matrix.target }}/release"
-        RELEASE_EXEC="$RELEASE_DIR/$APP"
+        RELEASE_EXEC="$RELEASE_DIR/$EXEC"
         echo "RELEASE_DIR: $RELEASE_DIR"
         echo "RELEASE_EXEC: $RELEASE_EXEC"
         APP_VERSION=$($RELEASE_EXEC -V | cut -d' ' -f2)
@@ -69,7 +70,7 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: ${{ env.RELEASE_ARTIFACT_NAME }}
 
-    - name: Checkout homebrew-$APP
+    - name: Checkout homebrew-${{ env.APP }}
       uses: actions/checkout@v4
       with:
         repository: ssanj/homebrew-${{ env.APP }}
