@@ -25,7 +25,12 @@ jobs:
     - name: Checkout ${{ env.APP }}
       uses: actions/checkout@v4
       with:
-        path: $APP
+        path: ${{ env.APP }}
+
+    - name: Echo Paths
+      run: |
+        echo "$PWD:"
+        ls -l "$PWD"
 
       # Run build
     - name: Install rustup
