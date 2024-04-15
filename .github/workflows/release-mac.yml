@@ -73,17 +73,17 @@ jobs:
         echo "$PWD:"
         ls -l "$PWD"
 
-    - name: Echo Parts
-      run: |
-        echo "APP_VERSION: $APP_VERSION"
-        echo "PWD: $PWD"
-
     - name: Download Source and SHA256
       run: |
         curl -L -o "$APP_VERSION.tar.gz" "https://github.com/ssanj/$APP/archive/refs/tags/v$APP_VERSION.tar.gz"
         APP_SHA256=$(openssl sha256 < "$APP_VERSION.tar.gz"  | cut -d' ' -f2)
         echo "APP_SHA256: $APP_SHA256"
         echo "APP_SHA256=$APP_SHA256" >> "$GITHUB_ENV"
+
+    - name: Echo Homebrew Parts
+      run: |
+        echo "APP_VERSION: $APP_VERSION"
+        echo "APP_SHA256: $APP_SHA256"
 
     # - name: Generate Homebrew Formula
     #   run: |

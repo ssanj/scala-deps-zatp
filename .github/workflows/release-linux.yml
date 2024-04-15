@@ -4,6 +4,9 @@ on:
     tags:
       - "v*"
 
+env:
+  APP: "scala-deps"
+
 jobs:
   release:
     runs-on: ${{ matrix.os }}
@@ -17,7 +20,7 @@ jobs:
         ]
 
     steps:
-    - name: Checkout Scala-Deps
+    - name: Checkout $APP
       uses: actions/checkout@v4
 
       # Run build

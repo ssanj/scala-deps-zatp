@@ -4,6 +4,9 @@ on:
     branches:
       - '*'
 
+env:
+  APP: "scala-deps"
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -17,7 +20,7 @@ jobs:
         ]
 
     steps:
-    - name: Checkout Zat
+    - name: Checkout $APP
       uses: actions/checkout@v4
 
       # Run build
