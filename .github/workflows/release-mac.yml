@@ -3,6 +3,8 @@ on:
   push:
     tags:
       - "v*"
+    branches:
+      - "*"
 
 env:
   APP: "scala-deps"
@@ -41,7 +43,7 @@ jobs:
         cd "$APP_DIR"
         cargo build --release --target ${{ matrix.target }} --target-dir "$APP_DIR/target"
         RELEASE_DIR="$APP_DIR/target/${{ matrix.target }}/release"
-        RELEASE_EXEC="$RELEASE_DIR/scalal-deps"
+        RELEASE_EXEC="$RELEASE_DIR/$APP"
         echo "RELEASE_DIR: $RELEASE_DIR"
         echo "RELEASE_EXEC: $RELEASE_EXEC"
         APP_VERSION=$($RELEASE_EXEC -V | cut -d' ' -f2)
