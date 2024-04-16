@@ -6,9 +6,9 @@ on:
     branches:
       - "*"
 
-env:
-  REPO: "scala-deps-zatp"
-  EXEC: "scala-deps"
+# env:
+#   REPO: "scala-deps-zatp"
+#   EXEC: "scala-deps"
 
 jobs:
   release:
@@ -23,83 +23,83 @@ jobs:
         ]
 
     steps:
-    - name: Checkout ${{ env.REPO }}
-      uses: actions/checkout@v4
-      with:
-        path: ${{ env.REPO }}
+#     - name: Checkout ${{ env.REPO }}
+#       uses: actions/checkout@v4
+#       with:
+#         path: ${{ env.REPO }}
 
-    - name: Echo Paths
+#     - name: Echo Paths
+#       run: |
+#         echo "$PWD:"
+#         ls -l "$PWD"
+
+#     - name: Install rustup
+#       run: |
+#         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup-init.sh
+#         sh rustup-init.sh -y --default-toolchain none
+#         rustup target add ${{ matrix.target }}
+
+#     - name: Build
+#       id: release-build
+#       run: |
+#         rustc -Vv
+#         cargo -V
+#         APP_DIR="$PWD/$REPO"
+#         cd "$APP_DIR"
+#         cargo build --release --target ${{ matrix.target }} --target-dir "$APP_DIR/target"
+#         RELEASE_DIR="$APP_DIR/target/${{ matrix.target }}/release"
+#         RELEASE_EXEC="$RELEASE_DIR/$EXEC"
+#         echo "RELEASE_DIR: $RELEASE_DIR"
+#         echo "RELEASE_EXEC: $RELEASE_EXEC"
+#         APP_VERSION=$($RELEASE_EXEC -V | cut -d' ' -f2)
+#         echo "APP_VERSION=$APP_VERSION" >> "$GITHUB_ENV"
+#         echo "ARTIFACT_NAME=$RELEASE_EXEC" >> "$GITHUB_ENV"
+#         echo "RELEASE_ARTIFACT_NAME=$RELEASE_EXEC-$APP_VERSION-${{ matrix.os }}-${{ matrix.target }}" >> "$GITHUB_ENV"
+
+#     - name: Copy Artifact
+#       id: copy-artifact
+#       run: |
+#         echo "RELEASE_ARTIFACT_NAME: $RELEASE_ARTIFACT_NAME"
+#         echo "ARTIFACT_NAME: $ARTIFACT_NAME"
+#         cp "$ARTIFACT_NAME" "$RELEASE_ARTIFACT_NAME"
+
+#     - uses: softprops/action-gh-release@v1
+#       if: startsWith(github.ref, 'refs/tags/')
+#       with:
+#         token: ${{ secrets.GITHUB_TOKEN }}
+#         files: ${{ env.RELEASE_ARTIFACT_NAME }}
+
+#     - name: Checkout homebrew-${{ env.REPO }}
+#       uses: actions/checkout@v4
+#       with:
+#         repository: ssanj/homebrew-${{ env.REPO }}
+#         path: homebrew-${{ env.REPO }}
+
+#     - name: Echo Paths
+#       run: |
+#         echo "$PWD:"
+#         ls -l "$PWD"
+
+#     - name: Download Source and SHA256
+#       run: |
+#         curl -L -o "$APP_VERSION.tar.gz" "https://github.com/ssanj/$APP/archive/refs/tags/v$APP_VERSION.tar.gz"
+#         APP_SHA256=$(openssl sha256 < "$APP_VERSION.tar.gz"  | cut -d' ' -f2)
+#         echo "APP_SHA256: $APP_SHA256"
+#         echo "APP_SHA256=$APP_SHA256" >> "$GITHUB_ENV"
+
+#     - name: Echo Homebrew Parts
+#       run: |
+#         echo "APP_VERSION: $APP_VERSION"
+#         echo "APP_SHA256: $APP_SHA256"
+
+    - name: Create PR in Homebrew Repo
       run: |
-        echo "$PWD:"
-        ls -l "$PWD"
-
-      # Run build
-    - name: Install rustup
-      run: |
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup-init.sh
-        sh rustup-init.sh -y --default-toolchain none
-        rustup target add ${{ matrix.target }}
-
-    - name: Build
-      id: release-build
-      run: |
-        rustc -Vv
-        cargo -V
-        APP_DIR="$PWD/$REPO"
-        cd "$APP_DIR"
-        cargo build --release --target ${{ matrix.target }} --target-dir "$APP_DIR/target"
-        RELEASE_DIR="$APP_DIR/target/${{ matrix.target }}/release"
-        RELEASE_EXEC="$RELEASE_DIR/$EXEC"
-        echo "RELEASE_DIR: $RELEASE_DIR"
-        echo "RELEASE_EXEC: $RELEASE_EXEC"
-        APP_VERSION=$($RELEASE_EXEC -V | cut -d' ' -f2)
-        echo "APP_VERSION=$APP_VERSION" >> "$GITHUB_ENV"
-        echo "ARTIFACT_NAME=$RELEASE_EXEC" >> "$GITHUB_ENV"
-        echo "RELEASE_ARTIFACT_NAME=$RELEASE_EXEC-$APP_VERSION-${{ matrix.os }}-${{ matrix.target }}" >> "$GITHUB_ENV"
-
-    - name: Copy Artifact
-      id: copy-artifact
-      run: |
-        echo "RELEASE_ARTIFACT_NAME: $RELEASE_ARTIFACT_NAME"
-        echo "ARTIFACT_NAME: $ARTIFACT_NAME"
-        cp "$ARTIFACT_NAME" "$RELEASE_ARTIFACT_NAME"
-
-    - uses: softprops/action-gh-release@v1
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: ${{ env.RELEASE_ARTIFACT_NAME }}
-
-    - name: Checkout homebrew-${{ env.REPO }}
-      uses: actions/checkout@v4
-      with:
-        repository: ssanj/homebrew-${{ env.REPO }}
-        path: homebrew-${{ env.REPO }}
-
-    - name: Echo Paths
-      run: |
-        echo "$PWD:"
-        ls -l "$PWD"
-
-    - name: Download Source and SHA256
-      run: |
-        curl -L -o "$APP_VERSION.tar.gz" "https://github.com/ssanj/$APP/archive/refs/tags/v$APP_VERSION.tar.gz"
-        APP_SHA256=$(openssl sha256 < "$APP_VERSION.tar.gz"  | cut -d' ' -f2)
-        echo "APP_SHA256: $APP_SHA256"
-        echo "APP_SHA256=$APP_SHA256" >> "$GITHUB_ENV"
-
-    - name: Echo Homebrew Parts
-      run: |
-        echo "APP_VERSION: $APP_VERSION"
-        echo "APP_SHA256: $APP_SHA256"
-
-    # - name: Generate Homebrew Formula
-    #   run: |
-    #     cd "$PWD/homebrew-zat"
-    #     cat templates/zat.rb.template | sed "s/\$VERSION/$APP_VERSION/g" | sed "s/\$SHA256/$APP_SHA256/g" > zat.rb
-    #     cat zat.rb
-    #     BRANCH="version_$APP_VERSION"
-    #     git checkout -b "$BRANCH"
-    #     git add .
-    #     git commit -m"Update to Zat version $APP_VERSION"
-    #     git push origin "$BRANCH"
+         APP_VERSION="0.1.5.0"
+         APP_SHA256="ABCDEF123"
+         curl -L \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.HOMEBREW_SCALA_DEPS }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/ssanj/homebrew-$REPO/dispatches \
+          -d '{"event_type":"homebrew-pr","client_payload": {"version":"$APP_VERSION","sha":"$APP_SHA256"}}'
