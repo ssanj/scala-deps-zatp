@@ -6,9 +6,9 @@ on:
     branches:
       - "*"
 
-# env:
-#   REPO: "scala-deps-zatp"
-#   EXEC: "scala-deps"
+env:
+  REPO: "scala-deps-zatp"
+  EXEC: "scala-deps"
 
 jobs:
   release:
