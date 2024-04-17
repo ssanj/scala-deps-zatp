@@ -96,6 +96,8 @@ jobs:
       run: |
          APP_VERSION="0.1.5.0"
          APP_SHA256="ABCDEF123"
+         echo "APP_VERSION: $APP_VERSION"
+         echo "APP_SHA256: $APP_SHA256"
          curl -L \
           -X POST \
           -H "Accept: application/vnd.github+json" \
