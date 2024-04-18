@@ -3,9 +3,9 @@ on:
   push:
     tags:
       - "v*"
-    branches:
-      - "*"
+
 env:
+  REPO: "scala-deps-zatp"
   EXEC: "scala-deps"
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
         ]
 
     steps:
-    - name: Checkout ${{ env.APP }}
+    - name: Checkout ${{ env.REPO }}
       uses: actions/checkout@v4
 
       # Run build

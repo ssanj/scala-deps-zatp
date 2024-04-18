@@ -5,7 +5,7 @@ on:
       - '*'
 
 env:
-  APP: "scala-deps"
+  EXEC: "scala-deps"
 
 jobs:
   test:
@@ -20,7 +20,7 @@ jobs:
         ]
 
     steps:
-    - name: Checkout ${{ env.APP }}
+    - name: Checkout ${{ env.EXEC }}
       uses: actions/checkout@v4
 
       # Run build
