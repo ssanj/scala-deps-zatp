@@ -83,6 +83,7 @@ jobs:
     - name: Download Source and SHA256
       run: |
         APP_VERSION="0.6.2"
+        echo "APP_VERSION=$APP_VERSION" >> "$GITHUB_ENV"
         curl -L -o "$APP_VERSION.tar.gz" "https://github.com/ssanj/$REPO/archive/refs/tags/v$APP_VERSION.tar.gz"
         APP_SHA256=$(openssl sha256 < "$APP_VERSION.tar.gz"  | cut -d' ' -f2)
         echo "Downloaded APP_SHA256: $APP_SHA256"
