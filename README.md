@@ -8,8 +8,17 @@
 
 ### Prerequisites
 
-`scala-deps` uses [Coursier](https://get-coursier.io/) in the background. As such Coursier must be [installed](https://get-coursier.io/docs/cli-installation) for `scala-deps` to work.
+`scala-deps` uses [Coursier](https://get-coursier.io/) in the background. As such Coursier must be [installed](https://get-coursier.io/docs/cli-installation) for `scala-deps` to work. You do not need to do this if you install `scala-deps` through [Homebrew](https://brew.sh/).
 
+
+### Homebrew
+
+```
+brew tap ssanj/homebrew-scala-deps-zatp
+brew install scala-deps
+```
+
+Note: Homebrew automatically installs all necessary dependencies for `scala-deps`
 
 ### Downloading a Release
 
@@ -91,8 +100,8 @@ Options:
       --verbose           Verbose debug logging
   -o <ORG>                Org String. Eg. org.typelevel
   -g <GROUP>              Group String. Eg. cats-core
-  -s <SCALA_VERSION>      Optional Scala version. One of 2.13 or 3
-  -h, --help              Print help
+  -s <SCALA_VERSION>      Scala version. One of 2.13 or 3. This can be optional for Java dependencies or libraries that don't have a specific compiler version attached
+  -h, --help              Print help (see more with '--help')
   -V, --version           Print version
 ```
 
